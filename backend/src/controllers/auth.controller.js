@@ -1,4 +1,3 @@
-import { profile } from "console";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import { ENV } from "../lib/env.js";
 import { generateToken } from "../lib/utils.js";
@@ -64,6 +63,10 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
     const { email, password } = req.body;
 
+    if (!email, !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+    }
+
     try {
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "Invalid credentials" });
@@ -78,7 +81,8 @@ export const login = async (req, res) => {
             fullName: user.fullName,
             email: user.email,
             profilePic: user.profilePic
-        });
+        })
+
     } catch (error) {
         console.error("Error in login controller:", error);
         res.status(500).json({ message: "Internal server error" });
